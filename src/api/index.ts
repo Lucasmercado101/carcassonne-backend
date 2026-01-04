@@ -111,30 +111,38 @@ io.on("connection", (socket) => {
     io.emit("playersData", playersData);
   });
 
-  type UserTeamSelectedData = {
+  type UserTeamSelectedData = UserActionData<{
     width: number;
     height: number;
-  };
+  }>;
 
-  socket.on(
-    "user-team-selected",
-    (msg: UserActionData<UserTeamSelectedData>) => {
-      console.log("user team selected", msg);
-      playersData[msg.team].deviceDimensions = msg.data;
-      io.emit("playersData", playersData);
-    }
-  );
+  socket.on("user-team-selected", (msg: UserTeamSelectedData) => {
+    console.log("user team selected", msg);
+    playersData[msg.team].deviceDimensions = msg.data;
+    io.emit("playersData", playersData);
+  });
 
-  type UserZoomedData = {
+  type UserZoomedData = UserActionData<{
     zoom: number;
     x: number;
     y: number;
-  };
+  }>;
 
-  socket.on("user-zoomed", (msg: UserActionData<UserZoomedData>) => {
+  socket.on("user-zoomed", (msg: UserZoomedData) => {
     console.log("user zoomed", msg);
     playersData[msg.team].zoom = msg.data.zoom;
     playersData[msg.team].origin = { x: msg.data.x, y: msg.data.y };
+    io.emit("playersData", playersData);
+  });
+
+  type ResizedWindowData = UserActionData<{
+    width: number;
+    height: number;
+  }>;
+
+  socket.on("resized-window", (msg: ResizedWindowData) => {
+    console.log("user resized window", msg);
+    playersData[msg.team].deviceDimensions = msg.data;
     io.emit("playersData", playersData);
   });
 });
