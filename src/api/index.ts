@@ -18,6 +18,10 @@ type PlayerData = {
     y: number;
   };
   zoom: number;
+  deviceDimensions: {
+    width: number;
+    height: number;
+  };
 };
 
 type PlayersData = {
@@ -35,7 +39,11 @@ const playersData: PlayersData = {
       x: 0,
       y: 0
     },
-    zoom: 1
+    zoom: 1,
+    deviceDimensions: {
+      width: 0,
+      height: 0
+    }
   },
   red: {
     score: 0,
@@ -43,7 +51,11 @@ const playersData: PlayersData = {
       x: 0,
       y: 0
     },
-    zoom: 1
+    zoom: 1,
+    deviceDimensions: {
+      width: 0,
+      height: 0
+    }
   },
   yellow: {
     score: 0,
@@ -51,7 +63,11 @@ const playersData: PlayersData = {
       x: 0,
       y: 0
     },
-    zoom: 1
+    zoom: 1,
+    deviceDimensions: {
+      width: 0,
+      height: 0
+    }
   },
   green: {
     score: 0,
@@ -59,7 +75,11 @@ const playersData: PlayersData = {
       x: 0,
       y: 0
     },
-    zoom: 1
+    zoom: 1,
+    deviceDimensions: {
+      width: 0,
+      height: 0
+    }
   },
   purple: {
     score: 0,
@@ -67,7 +87,11 @@ const playersData: PlayersData = {
       x: 0,
       y: 0
     },
-    zoom: 1
+    zoom: 1,
+    deviceDimensions: {
+      width: 0,
+      height: 0
+    }
   }
 };
 
@@ -79,6 +103,7 @@ type UserActionData<T> = {
 io.on("connection", (socket) => {
   socket.emit("playersData", playersData);
   console.log(`user ${socket.id} connected`);
+
   socket.on("user-panned", (data: UserActionData<{ x: number; y: number }>) => {
     const { x, y } = data.data;
     playersData[data.team].origin = { x, y };
