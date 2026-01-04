@@ -112,18 +112,18 @@ io.on("connection", (socket) => {
   });
 
   type UserTeamSelectedData = {
-    team: TeamColor;
-    deviceDimensions: {
-      width: number;
-      height: number;
-    };
+    width: number;
+    height: number;
   };
 
-  socket.on("user-team-selected", (data: UserTeamSelectedData) => {
-    console.log("user team selected", data);
-    playersData[data.team].deviceDimensions = data.deviceDimensions;
-    io.emit("playersData", playersData);
-  });
+  socket.on(
+    "user-team-selected",
+    (msg: UserActionData<UserTeamSelectedData>) => {
+      console.log("user team selected", msg);
+      playersData[msg.team].deviceDimensions = msg.data;
+      io.emit("playersData", playersData);
+    }
+  );
 });
 
 io.listen(server);
