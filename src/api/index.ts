@@ -124,6 +124,19 @@ io.on("connection", (socket) => {
       io.emit("playersData", playersData);
     }
   );
+
+  type UserZoomedData = {
+    zoom: number;
+    x: number;
+    y: number;
+  };
+
+  socket.on("user-zoomed", (msg: UserActionData<UserZoomedData>) => {
+    console.log("user zoomed", msg);
+    playersData[msg.team].zoom = msg.data.zoom;
+    playersData[msg.team].origin = { x: msg.data.x, y: msg.data.y };
+    io.emit("playersData", playersData);
+  });
 });
 
 io.listen(server);
