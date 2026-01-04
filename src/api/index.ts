@@ -72,13 +72,13 @@ type UserActionData<T> = {
 
 io.on("connection", (socket) => {
   socket.emit("playersData", playersData);
-});
-
-io.on("user-panned", (socket, data: UserActionData<[number, number]>) => {
-  const [x, y] = data.data;
-  playersData[data.team].origin = { x, y };
-  console.debug(`user ${data.team} panned to (${x}, ${y})`);
-  io.emit("playersData", playersData);
+  console.log(`user ${socket.id} connected`);
+  socket.on("user-panned", (data: UserActionData<{ x: number; y: number }>) => {
+    const { x, y } = data.data;
+    playersData[data.team].origin = { x, y };
+    console.log(`user ${data.team} panned to (${x}, ${y})`);
+    io.emit("playersData", playersData);
+  });
 });
 
 io.listen(server);
