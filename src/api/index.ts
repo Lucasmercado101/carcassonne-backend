@@ -110,6 +110,20 @@ io.on("connection", (socket) => {
     console.log(`user ${data.team} panned to (${x}, ${y})`);
     io.emit("playersData", playersData);
   });
+
+  type UserTeamSelectedData = {
+    team: TeamColor;
+    deviceDimensions: {
+      width: number;
+      height: number;
+    };
+  };
+
+  socket.on("user-team-selected", (data: UserTeamSelectedData) => {
+    console.log("user team selected", data);
+    playersData[data.team].deviceDimensions = data.deviceDimensions;
+    io.emit("playersData", playersData);
+  });
 });
 
 io.listen(server);
