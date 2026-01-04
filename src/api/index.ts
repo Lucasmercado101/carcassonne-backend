@@ -17,6 +17,7 @@ type PlayerData = {
     x: number;
     y: number;
   };
+  zoom: number;
 };
 
 type PlayersData = {
@@ -33,35 +34,40 @@ const playersData: PlayersData = {
     origin: {
       x: 0,
       y: 0
-    }
+    },
+    zoom: 1
   },
   red: {
     score: 0,
     origin: {
       x: 0,
       y: 0
-    }
+    },
+    zoom: 1
   },
   yellow: {
     score: 0,
     origin: {
       x: 0,
       y: 0
-    }
+    },
+    zoom: 1
   },
   green: {
     score: 0,
     origin: {
       x: 0,
       y: 0
-    }
+    },
+    zoom: 1
   },
   purple: {
     score: 0,
     origin: {
       x: 0,
       y: 0
-    }
+    },
+    zoom: 1
   }
 };
 
