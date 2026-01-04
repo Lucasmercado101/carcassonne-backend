@@ -10,7 +10,7 @@
     "typescript": "^5"
   },
   "scripts": {
-    "start": "bun run src/api/index.ts"
+    "start": "bun --watch run src/api/index.ts "
   },
   "dependencies": {
     "@types/express": "^5.0.6",
