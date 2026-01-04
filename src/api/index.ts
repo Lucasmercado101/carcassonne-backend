@@ -15,7 +15,7 @@ const playersData: PlayersData = {
     },
     zoom: 1,
     deviceDimensions: { width: 0, height: 0 },
-    availableMeeples: 0,
+    availableMeeples: 7,
     placedMeeples: []
   },
   red: {
@@ -29,7 +29,7 @@ const playersData: PlayersData = {
       width: 0,
       height: 0
     },
-    availableMeeples: 0,
+    availableMeeples: 7,
     placedMeeples: []
   },
   yellow: {
@@ -43,7 +43,7 @@ const playersData: PlayersData = {
       width: 0,
       height: 0
     },
-    availableMeeples: 0,
+    availableMeeples: 7,
     placedMeeples: []
   },
   green: {
@@ -57,7 +57,7 @@ const playersData: PlayersData = {
       width: 0,
       height: 0
     },
-    availableMeeples: 0,
+    availableMeeples: 7,
     placedMeeples: []
   },
   purple: {
@@ -71,7 +71,7 @@ const playersData: PlayersData = {
       width: 0,
       height: 0
     },
-    availableMeeples: 0,
+    availableMeeples: 7,
     placedMeeples: []
   }
 };
