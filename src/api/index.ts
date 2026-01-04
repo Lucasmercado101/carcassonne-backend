@@ -9,6 +9,8 @@ const io = new Server({
   cors: { origin: "http://localhost:5173" }
 });
 
+export type TeamColor = "blue" | "red" | "yellow" | "green" | "purple";
+
 type PlayerData = {
   score: number;
   origin: {
@@ -20,6 +22,9 @@ type PlayerData = {
 type PlayersData = {
   blue: PlayerData;
   red: PlayerData;
+  yellow: PlayerData;
+  green: PlayerData;
+  purple: PlayerData;
 };
 
 const playersData: PlayersData = {
@@ -36,12 +41,46 @@ const playersData: PlayersData = {
       x: 0,
       y: 0
     }
+  },
+  yellow: {
+    score: 0,
+    origin: {
+      x: 0,
+      y: 0
+    }
+  },
+  green: {
+    score: 0,
+    origin: {
+      x: 0,
+      y: 0
+    }
+  },
+  purple: {
+    score: 0,
+    origin: {
+      x: 0,
+      y: 0
+    }
   }
 };
 
+type UserActionData<T> = {
+  team: TeamColor;
+  data: T;
+};
+
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  socket.emit("playersData", playersData);
 });
+
+io.on("user-panned", (socket, data: UserActionData<[number, number]>) => {
+  const [x, y] = data.data;
+  playersData[data.team].origin = { x, y };
+  console.debug(`user ${data.team} panned to (${x}, ${y})`);
+  io.emit("playersData", playersData);
+});
+
 io.listen(server);
 
 server.listen(4000, () => {
