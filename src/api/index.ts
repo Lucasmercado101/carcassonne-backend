@@ -1,11 +1,80 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { playersData } from "./types";
-import type { UserActionData } from "./types";
+import type { PlayersData, UserActionData } from "./types";
 
 const app = express();
 const server = createServer(app);
+
+const playersData: PlayersData = {
+  blue: {
+    score: 0,
+    origin: {
+      x: 0,
+      y: 0
+    },
+    zoom: 1,
+    deviceDimensions: { width: 0, height: 0 },
+    availableMeeples: 0,
+    placedMeeples: []
+  },
+  red: {
+    score: 0,
+    origin: {
+      x: 0,
+      y: 0
+    },
+    zoom: 1,
+    deviceDimensions: {
+      width: 0,
+      height: 0
+    },
+    availableMeeples: 0,
+    placedMeeples: []
+  },
+  yellow: {
+    score: 0,
+    origin: {
+      x: 0,
+      y: 0
+    },
+    zoom: 1,
+    deviceDimensions: {
+      width: 0,
+      height: 0
+    },
+    availableMeeples: 0,
+    placedMeeples: []
+  },
+  green: {
+    score: 0,
+    origin: {
+      x: 0,
+      y: 0
+    },
+    zoom: 1,
+    deviceDimensions: {
+      width: 0,
+      height: 0
+    },
+    availableMeeples: 0,
+    placedMeeples: []
+  },
+  purple: {
+    score: 0,
+    origin: {
+      x: 0,
+      y: 0
+    },
+    zoom: 1,
+    deviceDimensions: {
+      width: 0,
+      height: 0
+    },
+    availableMeeples: 0,
+    placedMeeples: []
+  }
+};
 
 const io = new Server({
   cors: { origin: "http://localhost:5173" }
