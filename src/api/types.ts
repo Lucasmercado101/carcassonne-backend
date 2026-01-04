@@ -3,6 +3,12 @@ export type Coords = {
   y: number;
 };
 
+export type Meeple = {
+  id: number;
+  x: number;
+  y: number;
+};
+
 export type PlayerData = {
   score: number;
   origin: Coords;
@@ -11,8 +17,8 @@ export type PlayerData = {
     width: number;
     height: number;
   };
-  availableMeeples: number;
-  placedMeeples: Coords[];
+  availableMeeples: Meeple[];
+  placedMeeples: Meeple[];
 };
 
 export type TeamColor = "blue" | "red" | "yellow" | "green" | "purple";

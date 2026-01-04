@@ -6,6 +6,26 @@ import type { PlayersData, UserActionData } from "./types";
 const app = express();
 const server = createServer(app);
 
+let meeplesId = 0;
+const STARTING_MEEPLES = 7;
+
+function genMeeples() {
+  const meeples: {
+    id: number;
+    x: number;
+    y: number;
+  }[] = [];
+
+  for (let i = 0; i < STARTING_MEEPLES; i++) {
+    meeples.push({
+      id: meeplesId++,
+      x: 0,
+      y: 0
+    });
+  }
+  return meeples;
+}
+
 const playersData: PlayersData = {
   blue: {
     score: 0,
@@ -15,7 +35,7 @@ const playersData: PlayersData = {
     },
     zoom: 1,
     deviceDimensions: { width: 0, height: 0 },
-    availableMeeples: 7,
+    availableMeeples: genMeeples(),
     placedMeeples: []
   },
   red: {
@@ -29,7 +49,7 @@ const playersData: PlayersData = {
       width: 0,
       height: 0
     },
-    availableMeeples: 7,
+    availableMeeples: genMeeples(),
     placedMeeples: []
   },
   yellow: {
@@ -43,7 +63,7 @@ const playersData: PlayersData = {
       width: 0,
       height: 0
     },
-    availableMeeples: 7,
+    availableMeeples: genMeeples(),
     placedMeeples: []
   },
   green: {
@@ -57,7 +77,7 @@ const playersData: PlayersData = {
       width: 0,
       height: 0
     },
-    availableMeeples: 7,
+    availableMeeples: genMeeples(),
     placedMeeples: []
   },
   purple: {
@@ -71,7 +91,7 @@ const playersData: PlayersData = {
       width: 0,
       height: 0
     },
-    availableMeeples: 7,
+    availableMeeples: genMeeples(),
     placedMeeples: []
   }
 };
