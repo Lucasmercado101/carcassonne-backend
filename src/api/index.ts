@@ -130,6 +130,7 @@ type DrawnTile = {
   id: number;
   x: number;
   y: number;
+  rotationDegree: number;
 };
 
 let drawnTiles: DrawnTile[] = [];
@@ -250,7 +251,8 @@ io.on("connection", (socket) => {
     drawnTiles.push({
       id: msg.data.id,
       x: msg.data.x,
-      y: msg.data.y
+      y: msg.data.y,
+      rotationDegree: 0
     });
     io.emit("drawn-tiles", { drawnTiles, undrawnTiles: currUndrawnTiles });
   });
@@ -267,6 +269,22 @@ io.on("connection", (socket) => {
     drawnTiles = drawnTiles.map((tile) => {
       if (tile.id === msg.data.id) {
         return { ...tile, x: msg.data.x, y: msg.data.y };
+      }
+      return tile;
+    });
+    io.emit("drawn-tiles", { drawnTiles, undrawnTiles: currUndrawnTiles });
+  });
+
+  type TileRotatedData = UserActionData<{
+    id: number;
+    rotationDegree: number;
+  }>;
+
+  socket.on("tile-rotated", (msg: TileRotatedData) => {
+    console.log("tile rotated", msg);
+    drawnTiles = drawnTiles.map((tile) => {
+      if (tile.id === msg.data.id) {
+        return { ...tile, rotationDegree: msg.data.rotationDegree };
       }
       return tile;
     });
