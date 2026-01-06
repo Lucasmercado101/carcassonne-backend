@@ -97,7 +97,7 @@ const playersData: PlayersData = {
 };
 
 const io = new Server({
-  cors: { origin: "http://localhost:5173" }
+  cors: { origin: "http://localhost:5175" }
 });
 
 io.on("connection", (socket) => {
@@ -143,6 +143,25 @@ io.on("connection", (socket) => {
   socket.on("resized-window", (msg: ResizedWindowData) => {
     console.log("user resized window", msg);
     playersData[msg.team].deviceDimensions = msg.data;
+    io.emit("playersData", playersData);
+  });
+
+  type UserPlacedMeepleData = UserActionData<{
+    id: number;
+    x: number;
+    y: number;
+  }>;
+
+  socket.on("user-meeple-placed", (msg: UserPlacedMeepleData) => {
+    console.log("user meeple placed", msg);
+    playersData[msg.team].placedMeeples.push({
+      id: msg.data.id,
+      x: msg.data.x,
+      y: msg.data.y
+    });
+    playersData[msg.team].availableMeeples = playersData[
+      msg.team
+    ].availableMeeples.filter((meeple) => meeple.id !== msg.data.id);
     io.emit("playersData", playersData);
   });
 });
