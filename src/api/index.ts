@@ -131,10 +131,10 @@ type DrawnTile = {
   y: number;
 };
 
-const drawnTiles: DrawnTile[] = [];
+let drawnTiles: DrawnTile[] = [];
 
 const io = new Server({
-  cors: { origin: "http://localhost:5175" }
+  cors: { origin: "http://localhost:5174" }
 });
 
 io.on("connection", (socket) => {
@@ -143,12 +143,12 @@ io.on("connection", (socket) => {
     drawnTiles,
     undrawnTiles: currUndrawnTiles
   });
-  console.log(`user ${socket.id} connected`);
+  // console.log(`user ${socket.id} connected`);
 
   socket.on("user-panned", (data: UserActionData<{ x: number; y: number }>) => {
     const { x, y } = data.data;
     playersData[data.team].origin = { x, y };
-    console.log(`user ${data.team} panned to (${x}, ${y})`);
+    // console.log(`user ${data.team} panned to (${x}, ${y})`);
     io.emit("playersData", playersData);
   });
 
@@ -158,7 +158,7 @@ io.on("connection", (socket) => {
   }>;
 
   socket.on("user-team-selected", (msg: UserTeamSelectedData) => {
-    console.log("user team selected", msg);
+    // console.log("user team selected", msg);
     playersData[msg.team].deviceDimensions = msg.data;
     io.emit("playersData", playersData);
   });
@@ -170,7 +170,7 @@ io.on("connection", (socket) => {
   }>;
 
   socket.on("user-zoomed", (msg: UserZoomedData) => {
-    console.log("user zoomed", msg);
+    // console.log("user zoomed", msg);
     playersData[msg.team].zoom = msg.data.zoom;
     playersData[msg.team].origin = { x: msg.data.x, y: msg.data.y };
     io.emit("playersData", playersData);
@@ -182,7 +182,7 @@ io.on("connection", (socket) => {
   }>;
 
   socket.on("resized-window", (msg: ResizedWindowData) => {
-    console.log("user resized window", msg);
+    // console.log("user resized window", msg);
     playersData[msg.team].deviceDimensions = msg.data;
     io.emit("playersData", playersData);
   });
@@ -194,7 +194,7 @@ io.on("connection", (socket) => {
   }>;
 
   socket.on("user-meeple-placed", (msg: UserPlacedMeepleData) => {
-    console.log("user meeple placed", msg);
+    // console.log("user meeple placed", msg);
     playersData[msg.team].placedMeeples.push({
       id: msg.data.id,
       x: msg.data.x,
@@ -213,7 +213,7 @@ io.on("connection", (socket) => {
   }>;
 
   socket.on("meeple-moved", (msg: OnMeepleMovedData) => {
-    console.log("meeple moved", msg);
+    // console.log("meeple moved", msg);
     playersData[msg.team].placedMeeples = playersData[
       msg.team
     ].placedMeeples.map((meeple) => {
@@ -247,6 +247,24 @@ io.on("connection", (socket) => {
       id: msg.data.id,
       x: msg.data.x,
       y: msg.data.y
+    });
+    io.emit("drawn-tiles", { drawnTiles, undrawnTiles: currUndrawnTiles });
+  });
+
+  type TileMovedData = UserActionData<{
+    id: number;
+    x: number;
+    y: number;
+  }>;
+
+  socket.on("tile-moved", (msg: TileMovedData) => {
+    console.log("tile moved", msg);
+
+    drawnTiles = drawnTiles.map((tile) => {
+      if (tile.id === msg.data.id) {
+        return { ...tile, x: msg.data.x, y: msg.data.y };
+      }
+      return tile;
     });
     io.emit("drawn-tiles", { drawnTiles, undrawnTiles: currUndrawnTiles });
   });
