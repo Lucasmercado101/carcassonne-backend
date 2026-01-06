@@ -36,6 +36,8 @@ export const DEFAULT_UNDRAWN_TILES = [
   { id: 24, amount: 1 }
 ];
 
+let currUndrawnTiles = [...DEFAULT_UNDRAWN_TILES];
+
 function genMeeples() {
   const meeples: {
     id: number;
@@ -137,7 +139,10 @@ const io = new Server({
 
 io.on("connection", (socket) => {
   socket.emit("playersData", playersData);
-  socket.emit("drawn-tiles", drawnTiles);
+  socket.emit("drawn-tiles", {
+    drawnTiles,
+    undrawnTiles: currUndrawnTiles
+  });
   console.log(`user ${socket.id} connected`);
 
   socket.on("user-panned", (data: UserActionData<{ x: number; y: number }>) => {
@@ -227,7 +232,23 @@ io.on("connection", (socket) => {
   }>;
 
   socket.on("tile-drawn", (msg: OnDrawTileAction) => {
-    console.log("tile drawn", msg);
+    const drawnTile = currUndrawnTiles.find((tile) => tile.id === msg.data.id);
+
+    currUndrawnTiles = currUndrawnTiles
+      .map((tile) => {
+        if (tile.id === drawnTile?.id) {
+          return { ...tile, amount: tile.amount - 1 };
+        }
+        return tile;
+      })
+      .filter((tile) => tile.amount > 0);
+
+    drawnTiles.push({
+      id: msg.data.id,
+      x: msg.data.x,
+      y: msg.data.y
+    });
+    io.emit("drawn-tiles", { drawnTiles, undrawnTiles: currUndrawnTiles });
   });
 });
 
