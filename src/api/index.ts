@@ -164,6 +164,25 @@ io.on("connection", (socket) => {
     ].availableMeeples.filter((meeple) => meeple.id !== msg.data.id);
     io.emit("playersData", playersData);
   });
+
+  type OnMeepleMovedData = UserActionData<{
+    id: number;
+    x: number;
+    y: number;
+  }>;
+
+  socket.on("meeple-moved", (msg: OnMeepleMovedData) => {
+    console.log("meeple moved", msg);
+    playersData[msg.team].placedMeeples = playersData[
+      msg.team
+    ].placedMeeples.map((meeple) => {
+      if (meeple.id === msg.data.id) {
+        return { ...meeple, x: msg.data.x, y: msg.data.y };
+      }
+      return meeple;
+    });
+    io.emit("playersData", playersData);
+  });
 });
 
 io.listen(server);
