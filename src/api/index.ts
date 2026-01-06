@@ -1,6 +1,7 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import path from "path";
 import type { PlayersData, UserActionData } from "./types";
 
 const app = express();
@@ -133,8 +134,11 @@ type DrawnTile = {
 
 let drawnTiles: DrawnTile[] = [];
 
-const io = new Server({
-  cors: { origin: "http://localhost:5174" }
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
 });
 
 io.on("connection", (socket) => {
@@ -270,7 +274,12 @@ io.on("connection", (socket) => {
   });
 });
 
-io.listen(server);
+app.use(express.static("src/built_front"));
+
+// Serve index.html for all routes (SPA fallback)
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(process.cwd(), "src/built_front", "index.html"));
+});
 
 server.listen(4000, () => {
   console.log("server is running on port 4000");
