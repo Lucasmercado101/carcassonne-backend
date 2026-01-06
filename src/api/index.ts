@@ -9,6 +9,33 @@ const server = createServer(app);
 let meeplesId = 0;
 const STARTING_MEEPLES = 7;
 
+export const DEFAULT_UNDRAWN_TILES = [
+  { id: 1, amount: 2 },
+  { id: 2, amount: 4 },
+  { id: 3, amount: 5 },
+  { id: 4, amount: 1 },
+  { id: 5, amount: 1 },
+  { id: 6, amount: 1 },
+  { id: 7, amount: 1 },
+  { id: 8, amount: 3 },
+  { id: 9, amount: 2 },
+  { id: 10, amount: 3 },
+  { id: 11, amount: 3 },
+  { id: 12, amount: 3 },
+  { id: 13, amount: 2 },
+  { id: 14, amount: 3 },
+  { id: 15, amount: 2 },
+  { id: 16, amount: 3 },
+  { id: 17, amount: 1 },
+  { id: 18, amount: 3 },
+  { id: 19, amount: 2 },
+  { id: 20, amount: 1 },
+  { id: 21, amount: 8 },
+  { id: 22, amount: 9 },
+  { id: 23, amount: 4 },
+  { id: 24, amount: 1 }
+];
+
 function genMeeples() {
   const meeples: {
     id: number;
@@ -96,12 +123,21 @@ const playersData: PlayersData = {
   }
 };
 
+type DrawnTile = {
+  id: number;
+  x: number;
+  y: number;
+};
+
+const drawnTiles: DrawnTile[] = [];
+
 const io = new Server({
   cors: { origin: "http://localhost:5175" }
 });
 
 io.on("connection", (socket) => {
   socket.emit("playersData", playersData);
+  socket.emit("drawn-tiles", drawnTiles);
   console.log(`user ${socket.id} connected`);
 
   socket.on("user-panned", (data: UserActionData<{ x: number; y: number }>) => {
@@ -182,6 +218,16 @@ io.on("connection", (socket) => {
       return meeple;
     });
     io.emit("playersData", playersData);
+  });
+
+  type OnDrawTileAction = UserActionData<{
+    id: number;
+    x: number;
+    y: number;
+  }>;
+
+  socket.on("tile-drawn", (msg: OnDrawTileAction) => {
+    console.log("tile drawn", msg);
   });
 });
 
