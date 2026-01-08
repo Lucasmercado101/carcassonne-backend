@@ -166,6 +166,10 @@ io.on("connection", (socket) => {
     console.log("user team selected", msg);
     playersData[msg.team].deviceDimensions = msg.data;
     io.emit("playersData", playersData);
+    io.emit("drawn-tiles", {
+      drawnTiles,
+      undrawnTiles: currUndrawnTiles
+    });
   });
 
   type UserZoomedData = UserActionData<{
