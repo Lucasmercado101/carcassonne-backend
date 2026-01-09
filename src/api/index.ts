@@ -303,6 +303,8 @@ app.get(/.*/, (req, res) => {
   res.sendFile(path.join(process.cwd(), "src/built_front", "index.html"));
 });
 
-server.listen(4000, () => {
-  console.log("server is running on port 4000");
+const PORT = process.env.PORT || 4123;
+
+server.listen(PORT, () => {
+  console.log(`server is running on port ${PORT}`);
 });
