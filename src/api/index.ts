@@ -128,7 +128,7 @@ const playersData: PlayersData = {
 
 type DrawnTile = {
   id: number;
-  uid: number;
+  uid: string;
   x: number;
   y: number;
   rotationDegree: number;
@@ -237,7 +237,7 @@ io.on("connection", (socket) => {
 
   type OnDrawTileAction = UserActionData<{
     id: number;
-    uid: number;
+    uid: string;
     x: number;
     y: number;
   }>;
@@ -266,7 +266,7 @@ io.on("connection", (socket) => {
   });
 
   type TileMovedData = UserActionData<{
-    id: number;
+    uid: string;
     x: number;
     y: number;
   }>;
@@ -275,7 +275,7 @@ io.on("connection", (socket) => {
     console.log("tile moved", msg);
 
     drawnTiles = drawnTiles.map((tile) => {
-      if (tile.id === msg.data.id) {
+      if (tile.uid === msg.data.uid) {
         return { ...tile, x: msg.data.x, y: msg.data.y };
       }
       return tile;
@@ -284,14 +284,14 @@ io.on("connection", (socket) => {
   });
 
   type TileRotatedData = UserActionData<{
-    id: number;
+    uid: string;
     rotationDegree: number;
   }>;
 
   socket.on("tile-rotated", (msg: TileRotatedData) => {
     console.log("tile rotated", msg);
     drawnTiles = drawnTiles.map((tile) => {
-      if (tile.id === msg.data.id) {
+      if (tile.uid === msg.data.uid) {
         return { ...tile, rotationDegree: msg.data.rotationDegree };
       }
       return tile;
