@@ -298,17 +298,17 @@ io.on("connection", (socket) => {
 
 app.use(express.static("src/built_front"));
 
-// Serve index.html for all routes (SPA fallback)
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(process.cwd(), "src/built_front", "index.html"));
-});
-
 app.get("/api/get-current-play-data", (req, res) => {
   res.json({
     playersData,
     undrawnTiles: currUndrawnTiles,
     drawnTiles
   });
+});
+
+// Serve index.html for all routes (SPA fallback)
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(process.cwd(), "src/built_front", "index.html"));
 });
 
 const PORT = process.env.PORT || 4123;
