@@ -128,6 +128,7 @@ const playersData: PlayersData = {
 
 type DrawnTile = {
   id: number;
+  uid: number;
   x: number;
   y: number;
   rotationDegree: number;
@@ -236,11 +237,13 @@ io.on("connection", (socket) => {
 
   type OnDrawTileAction = UserActionData<{
     id: number;
+    uid: number;
     x: number;
     y: number;
   }>;
 
   socket.on("tile-drawn", (msg: OnDrawTileAction) => {
+    console.log("tile drawn", msg);
     const drawnTile = currUndrawnTiles.find((tile) => tile.id === msg.data.id);
 
     currUndrawnTiles = currUndrawnTiles
@@ -254,6 +257,7 @@ io.on("connection", (socket) => {
 
     drawnTiles.push({
       id: msg.data.id,
+      uid: msg.data.uid,
       x: msg.data.x,
       y: msg.data.y,
       rotationDegree: 0
