@@ -303,6 +303,14 @@ app.get(/.*/, (req, res) => {
   res.sendFile(path.join(process.cwd(), "src/built_front", "index.html"));
 });
 
+app.get("/api/get-current-play-data", (req, res) => {
+  res.json({
+    playersData,
+    undrawnTiles: currUndrawnTiles,
+    drawnTiles
+  });
+});
+
 const PORT = process.env.PORT || 4123;
 
 server.listen(PORT, () => {
