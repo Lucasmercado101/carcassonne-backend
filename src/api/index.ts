@@ -359,7 +359,18 @@ io.on("connection", (socket) => {
       x: data.worldX,
       y: data.worldY
     };
-    socket.broadcast.emit("playersData", playersData);
+
+    const response: UserActionData<{
+      x: number;
+      y: number;
+    }> = {
+      team: team,
+      data: {
+        x: data.worldX,
+        y: data.worldY
+      }
+    };
+    socket.broadcast.emit("cursor-moved", response);
   });
 });
 
