@@ -7,34 +7,36 @@ import type { PlayersData, UserActionData } from "./types";
 const app = express();
 const server = createServer(app);
 
+const TILES_DATA = "tiles-data";
+
 let meeplesId = 0;
 const STARTING_MEEPLES = 7;
 
 export const DEFAULT_UNDRAWN_TILES = [
-  { id: 1, amount: 2 },
-  { id: 2, amount: 4 },
-  { id: 3, amount: 5 },
-  { id: 4, amount: 1 },
-  { id: 5, amount: 1 },
-  { id: 6, amount: 1 },
-  { id: 7, amount: 1 },
-  { id: 8, amount: 3 },
-  { id: 9, amount: 2 },
-  { id: 10, amount: 3 },
-  { id: 11, amount: 3 },
-  { id: 12, amount: 3 },
-  { id: 13, amount: 2 },
-  { id: 14, amount: 3 },
-  { id: 15, amount: 2 },
-  { id: 16, amount: 3 },
-  { id: 17, amount: 1 },
-  { id: 18, amount: 3 },
-  { id: 19, amount: 2 },
-  { id: 20, amount: 1 },
-  { id: 21, amount: 8 },
-  { id: 22, amount: 9 },
-  { id: 23, amount: 4 },
-  { id: 24, amount: 1 }
+  { imageId: 1, amount: 2 },
+  { imageId: 2, amount: 4 },
+  { imageId: 3, amount: 5 },
+  { imageId: 4, amount: 1 },
+  { imageId: 5, amount: 1 },
+  { imageId: 6, amount: 1 },
+  { imageId: 7, amount: 1 },
+  { imageId: 8, amount: 3 },
+  { imageId: 9, amount: 2 },
+  { imageId: 10, amount: 3 },
+  { imageId: 11, amount: 3 },
+  { imageId: 12, amount: 3 },
+  { imageId: 13, amount: 2 },
+  { imageId: 14, amount: 3 },
+  { imageId: 15, amount: 2 },
+  { imageId: 16, amount: 3 },
+  { imageId: 17, amount: 1 },
+  { imageId: 18, amount: 3 },
+  { imageId: 19, amount: 2 },
+  { imageId: 20, amount: 1 },
+  { imageId: 21, amount: 8 },
+  { imageId: 22, amount: 9 },
+  { imageId: 23, amount: 4 },
+  { imageId: 24, amount: 1 }
 ];
 
 let currUndrawnTiles = [...DEFAULT_UNDRAWN_TILES];
@@ -127,7 +129,7 @@ const playersData: PlayersData = {
 };
 
 type DrawnTile = {
-  id: number;
+  imageId: number;
   uid: string;
   x: number;
   y: number;
@@ -145,7 +147,7 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   socket.emit("playersData", playersData);
-  socket.emit("drawn-tiles", {
+  socket.emit(TILES_DATA, {
     drawnTiles,
     undrawnTiles: currUndrawnTiles
   });
@@ -167,7 +169,7 @@ io.on("connection", (socket) => {
     console.log("user team selected", msg);
     playersData[msg.team].deviceDimensions = msg.data;
     io.emit("playersData", playersData);
-    io.emit("drawn-tiles", {
+    io.emit(TILES_DATA, {
       drawnTiles,
       undrawnTiles: currUndrawnTiles
     });
@@ -245,12 +247,12 @@ io.on("connection", (socket) => {
   socket.on("tile-drawn", (msg: OnDrawTileAction) => {
     console.log("tile drawn", msg);
     const drawnTile = currUndrawnTiles.find(
-      (tile) => tile.id === msg.data.imageId
+      (tile) => tile.imageId === msg.data.imageId
     );
 
     currUndrawnTiles = currUndrawnTiles
       .map((tile) => {
-        if (tile.id === drawnTile?.id) {
+        if (tile.imageId === drawnTile?.imageId) {
           return { ...tile, amount: tile.amount - 1 };
         }
         return tile;
@@ -258,13 +260,13 @@ io.on("connection", (socket) => {
       .filter((tile) => tile.amount > 0);
 
     drawnTiles.push({
-      id: msg.data.imageId,
+      imageId: msg.data.imageId,
       uid: msg.data.uid,
       x: msg.data.x,
       y: msg.data.y,
       rotationDegree: 0
     });
-    io.emit("drawn-tiles", { drawnTiles, undrawnTiles: currUndrawnTiles });
+    io.emit(TILES_DATA, { drawnTiles, undrawnTiles: currUndrawnTiles });
   });
 
   type TileMovedData = UserActionData<{
@@ -282,7 +284,7 @@ io.on("connection", (socket) => {
       }
       return tile;
     });
-    io.emit("drawn-tiles", { drawnTiles, undrawnTiles: currUndrawnTiles });
+    io.emit(TILES_DATA, { drawnTiles, undrawnTiles: currUndrawnTiles });
   });
 
   type TileRotatedData = UserActionData<{
@@ -298,7 +300,7 @@ io.on("connection", (socket) => {
       }
       return tile;
     });
-    io.emit("drawn-tiles", { drawnTiles, undrawnTiles: currUndrawnTiles });
+    io.emit(TILES_DATA, { drawnTiles, undrawnTiles: currUndrawnTiles });
   });
 });
 
