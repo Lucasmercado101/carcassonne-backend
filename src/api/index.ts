@@ -159,6 +159,16 @@ io.on("connection", (socket) => {
   });
   console.log(`user ${socket.id} connected`);
 
+  // setInterval(() => {
+  //   console.log("sending -> mocking lots of players changes");
+  //   const mockCoords = { x: Math.random() * 100, y: Math.random() * 100 };
+  //   console.log("Mock data", mockCoords);
+  //   socket.broadcast.emit("user-panned", {
+  //     team: "blue",
+  //     data: mockCoords
+  //   });
+  // }, 2000);
+
   socket.on("user-panned", (data: UserActionData<{ x: number; y: number }>) => {
     const { x, y } = data.data;
     console.log(`user ${data.team} panned to (${x}, ${y})`);
@@ -202,7 +212,23 @@ io.on("connection", (socket) => {
     console.log("user zoomed", msg);
     playersData[msg.team].zoom = msg.data.zoom;
     playersData[msg.team].origin = { x: msg.data.x, y: msg.data.y };
-    io.emit("playersData", playersData);
+
+    type UserZoomedResponse = UserActionData<{
+      zoom: number;
+      x: number;
+      y: number;
+    }>;
+
+    const resp: UserZoomedResponse = {
+      team: msg.team,
+      data: {
+        zoom: msg.data.zoom,
+        x: msg.data.x,
+        y: msg.data.y
+      }
+    };
+
+    socket.broadcast.emit("user-zoomed", resp);
   });
 
   type ResizedWindowData = UserActionData<{
