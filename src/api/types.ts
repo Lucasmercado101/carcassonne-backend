@@ -19,6 +19,7 @@ export type PlayerData = {
   };
   availableMeeples: Meeple[];
   placedMeeples: Meeple[];
+  cursorPosition?: Coords;
 };
 
 export type TeamColor = "blue" | "red" | "yellow" | "green" | "purple";

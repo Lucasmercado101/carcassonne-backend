@@ -205,7 +205,7 @@ io.on("connection", (socket) => {
     y: number;
   }>;
 
-  socket.on("user-meeple-placed", (msg: UserPlacedMeepleData) => {
+  socket.on("meeple-placed", (msg: UserPlacedMeepleData) => {
     console.log("user meeple placed", msg);
     playersData[msg.team].placedMeeples.push({
       id: msg.data.id,
@@ -301,6 +301,20 @@ io.on("connection", (socket) => {
       return tile;
     });
     io.emit(TILES_DATA, { drawnTiles, undrawnTiles: currUndrawnTiles });
+  });
+
+  type UserCursorMovedData = UserActionData<{
+    worldX: number;
+    worldY: number;
+  }>;
+
+  socket.on("cursor-moved", ({ team, data }: UserCursorMovedData) => {
+    console.log("cursor moved", data);
+    playersData[team].cursorPosition = {
+      x: data.worldX,
+      y: data.worldY
+    };
+    io.emit("playersData", playersData);
   });
 });
 
