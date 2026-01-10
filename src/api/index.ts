@@ -261,7 +261,15 @@ io.on("connection", (socket) => {
   socket.on("resized-window", (msg: ResizedWindowData) => {
     console.log("user resized window", msg);
     playersData[msg.team].deviceDimensions = msg.data;
-    io.emit("playersData", playersData);
+    type ResizedWindowResponse = UserActionData<{
+      width: number;
+      height: number;
+    }>;
+    const response: ResizedWindowResponse = {
+      team: msg.team,
+      data: msg.data
+    };
+    socket.broadcast.emit("resized-window", response);
   });
 
   type UserPlacedMeepleData = UserActionData<{
