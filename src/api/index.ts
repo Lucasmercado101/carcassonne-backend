@@ -236,7 +236,7 @@ io.on("connection", (socket) => {
   });
 
   type OnDrawTileAction = UserActionData<{
-    id: number;
+    imageId: number;
     uid: string;
     x: number;
     y: number;
@@ -244,7 +244,9 @@ io.on("connection", (socket) => {
 
   socket.on("tile-drawn", (msg: OnDrawTileAction) => {
     console.log("tile drawn", msg);
-    const drawnTile = currUndrawnTiles.find((tile) => tile.id === msg.data.id);
+    const drawnTile = currUndrawnTiles.find(
+      (tile) => tile.id === msg.data.imageId
+    );
 
     currUndrawnTiles = currUndrawnTiles
       .map((tile) => {
@@ -256,7 +258,7 @@ io.on("connection", (socket) => {
       .filter((tile) => tile.amount > 0);
 
     drawnTiles.push({
-      id: msg.data.id,
+      id: msg.data.imageId,
       uid: msg.data.uid,
       x: msg.data.x,
       y: msg.data.y,
