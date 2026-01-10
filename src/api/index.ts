@@ -351,7 +351,22 @@ io.on("connection", (socket) => {
       }
       return tile;
     });
-    io.emit(TILES_DATA, { drawnTiles, undrawnTiles: currUndrawnTiles });
+
+    type TileMovedResponse = UserActionData<{
+      uid: string;
+      x: number;
+      y: number;
+    }>;
+
+    const response: TileMovedResponse = {
+      team: msg.team,
+      data: {
+        uid: msg.data.uid,
+        x: msg.data.x,
+        y: msg.data.y
+      }
+    };
+    socket.broadcast.emit("tile-moved", response);
   });
 
   type TileRotatedData = UserActionData<{
@@ -367,7 +382,20 @@ io.on("connection", (socket) => {
       }
       return tile;
     });
-    io.emit(TILES_DATA, { drawnTiles, undrawnTiles: currUndrawnTiles });
+
+    type TileRotatedResponse = UserActionData<{
+      uid: string;
+      rotationDegree: number;
+    }>;
+
+    const response: TileRotatedResponse = {
+      team: msg.team,
+      data: {
+        uid: msg.data.uid,
+        rotationDegree: msg.data.rotationDegree
+      }
+    };
+    socket.broadcast.emit("tile-rotated", response);
   });
 
   type UserCursorMovedData = UserActionData<{
