@@ -139,6 +139,7 @@ type DrawnTile = {
   x: number;
   y: number;
   rotationDegree: number;
+  isHighlighted: boolean;
 };
 
 let drawnTiles: DrawnTile[] = [];
@@ -271,12 +272,14 @@ io.on("connection", (socket) => {
       })
       .filter((tile) => tile.amount > 0);
 
+    drawnTiles = drawnTiles.map((tile) => ({ ...tile, isHighlighted: false }));
     drawnTiles.push({
       imageId: msg.data.imageId,
       uid: msg.data.uid,
       x: msg.data.x,
       y: msg.data.y,
-      rotationDegree: 0
+      rotationDegree: 0,
+      isHighlighted: true
     });
     io.emit(TILES_DATA, { drawnTiles, undrawnTiles: currUndrawnTiles });
   });
