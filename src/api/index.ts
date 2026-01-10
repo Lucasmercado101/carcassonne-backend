@@ -314,7 +314,7 @@ io.on("connection", (socket) => {
       x: data.worldX,
       y: data.worldY
     };
-    io.emit("playersData", playersData);
+    socket.broadcast.emit("playersData", playersData);
   });
 });
 
