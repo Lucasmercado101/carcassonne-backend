@@ -161,9 +161,13 @@ io.on("connection", (socket) => {
 
   socket.on("user-panned", (data: UserActionData<{ x: number; y: number }>) => {
     const { x, y } = data.data;
-    playersData[data.team].origin = { x, y };
     console.log(`user ${data.team} panned to (${x}, ${y})`);
-    io.emit("playersData", playersData);
+    playersData[data.team].origin = { x, y };
+    const resp: UserActionData<{ x: number; y: number }> = {
+      team: data.team,
+      data: { x, y }
+    };
+    socket.broadcast.emit("user-panned", resp);
   });
 
   type UserTeamSelectedData = UserActionData<{
