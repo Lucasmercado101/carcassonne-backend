@@ -160,12 +160,34 @@ io.on("connection", (socket) => {
   console.log(`user ${socket.id} connected`);
 
   // setInterval(() => {
-  //   console.log("sending -> mocking lots of players changes");
-  //   const mockCoords = { x: Math.random() * 100, y: Math.random() * 100 };
-  //   console.log("Mock data", mockCoords);
+  //   // console.log("sending -> mocking lots of players changes");
+  //   const cursorMovedMockData = {
+  //     x: Math.random() * 1000,
+  //     y: Math.random() * 1000
+  //   };
+  //   // console.log("Mock data", cursorMovedMockData);
+  //   socket.broadcast.emit("cursor-moved", {
+  //     team: "blue",
+  //     data: cursorMovedMockData
+  //   });
+
+  //   const userPannedMockData = {
+  //     x: Math.random() * 100,
+  //     y: Math.random() * 100
+  //   };
   //   socket.broadcast.emit("user-panned", {
   //     team: "blue",
-  //     data: mockCoords
+  //     data: userPannedMockData
+  //   });
+
+  //   const userZoomedMockData = {
+  //     zoom: Math.random() * 1 + 0.5,
+  //     x: userPannedMockData.x,
+  //     y: userPannedMockData.y
+  //   };
+  //   socket.broadcast.emit("user-zoomed", {
+  //     team: "blue",
+  //     data: userZoomedMockData
   //   });
   // }, 2000);
 
