@@ -21,6 +21,7 @@ export type PlayerData = {
   placedMeeples: Meeple[];
   cursorPosition?: Coords;
   isOnTouchScreen: boolean;
+  isPlaying: boolean;
 };
 
 export type TeamColor = "blue" | "red" | "yellow" | "green" | "purple";

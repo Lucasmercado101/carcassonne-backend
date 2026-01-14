@@ -69,7 +69,8 @@ const playersData: PlayersData = {
     deviceDimensions: { width: 0, height: 0 },
     availableMeeples: genMeeples(),
     placedMeeples: [],
-    isOnTouchScreen: false
+    isOnTouchScreen: false,
+    isPlaying: false
   },
   red: {
     score: 0,
@@ -84,7 +85,8 @@ const playersData: PlayersData = {
     },
     availableMeeples: genMeeples(),
     placedMeeples: [],
-    isOnTouchScreen: false
+    isOnTouchScreen: false,
+    isPlaying: false
   },
   yellow: {
     score: 0,
@@ -99,7 +101,8 @@ const playersData: PlayersData = {
     },
     availableMeeples: genMeeples(),
     placedMeeples: [],
-    isOnTouchScreen: false
+    isOnTouchScreen: false,
+    isPlaying: false
   },
   green: {
     score: 0,
@@ -114,7 +117,8 @@ const playersData: PlayersData = {
     },
     availableMeeples: genMeeples(),
     placedMeeples: [],
-    isOnTouchScreen: false
+    isOnTouchScreen: false,
+    isPlaying: false
   },
   purple: {
     score: 0,
@@ -129,7 +133,8 @@ const playersData: PlayersData = {
     },
     availableMeeples: genMeeples(),
     placedMeeples: [],
-    isOnTouchScreen: false
+    isOnTouchScreen: false,
+    isPlaying: false
   }
 };
 
@@ -217,6 +222,7 @@ io.on("connection", (socket) => {
     playersData[msg.team].zoom = msg.data.zoom;
     playersData[msg.team].origin = { x: msg.data.x, y: msg.data.y };
     playersData[msg.team].isOnTouchScreen = msg.data.isOnTouchScreen;
+    playersData[msg.team].isPlaying = true;
     io.emit("playersData", playersData);
     io.emit(TILES_DATA, {
       drawnTiles,
