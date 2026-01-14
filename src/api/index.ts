@@ -288,7 +288,7 @@ io.on("connection", (socket) => {
     playersData[msg.team].availableMeeples = playersData[
       msg.team
     ].availableMeeples.filter((meeple) => meeple.id !== msg.data.id);
-    io.emit("playersData", playersData);
+    socket.broadcast.emit("meeple-placed", msg);
   });
 
   type OnMeepleMovedData = UserActionData<{
