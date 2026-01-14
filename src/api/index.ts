@@ -436,6 +436,14 @@ io.on("connection", (socket) => {
     };
     socket.broadcast.emit("cursor-moved", response);
   });
+
+  type UserScoreChangedData = UserActionData<number>;
+
+  socket.on("score-changed", (msg: UserScoreChangedData) => {
+    console.log("score changed", msg);
+    playersData[msg.team].score = msg.data;
+    socket.broadcast.emit("score-changed", msg);
+  });
 });
 
 app.use(express.static("src/built_front"));
