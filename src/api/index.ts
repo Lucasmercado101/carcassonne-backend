@@ -307,7 +307,7 @@ io.on("connection", (socket) => {
       }
       return meeple;
     });
-    io.emit("playersData", playersData);
+    socket.broadcast.emit("meeple-moved", msg);
   });
 
   type OnDrawTileAction = UserActionData<{
