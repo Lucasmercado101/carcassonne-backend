@@ -10,7 +10,7 @@ export type Meeple = {
 };
 
 export type PlayerData = {
-  color: TeamColor;
+  team: TeamColor;
   score: number;
   origin: Coords;
   zoom: number;

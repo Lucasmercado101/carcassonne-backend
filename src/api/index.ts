@@ -65,12 +65,9 @@ function genMeeples() {
 
 const playersData: PlayersData = [];
 
-function mapPlayer(
-  color: TeamColor,
-  mapFn: (player: PlayerData) => PlayerData
-) {
+function mapPlayer(team: TeamColor, mapFn: (player: PlayerData) => PlayerData) {
   return playersData.map((player) => {
-    if (player.color === color) {
+    if (player.team === team) {
       return mapFn(player);
     }
     return player;
@@ -120,9 +117,9 @@ io.on("connection", (socket) => {
 
   socket.on("team-selected", ({ team, data }: UserTeamSelectedData) => {
     console.log("user team selected", data);
-    if (!playersData.find((player) => player.color === team)) {
+    if (!playersData.find((player) => player.team === team)) {
       playersData.push({
-        color: team,
+        team: team,
         score: 0,
         origin: { x: 0, y: 0 },
         zoom: 1,
