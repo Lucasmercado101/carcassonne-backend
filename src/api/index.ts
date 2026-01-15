@@ -161,8 +161,13 @@ io.on("connection", (socket) => {
     console.log("game started!");
     gameStarted = true;
     shuffleTurnOrder();
+
+    const firstTurn = turnOrder[0]!;
+    mapPlayer(firstTurn, (player) => ({ ...player, isTurn: true }));
+
     socket.broadcast.emit("game-started", gameStarted);
     io.emit("turns-order-changed", turnOrder);
+    io.emit("current-turn-changed", firstTurn);
   });
 
   type UserZoomedData = UserActionData<{
