@@ -59,6 +59,8 @@ function genMeeples() {
 }
 
 const playersData: PlayerData[] = [];
+let turnOrder: TeamColor[] = [];
+let gameStarted = false;
 
 function mapPlayer(team: TeamColor, mapFn: (player: PlayerData) => PlayerData) {
   for (let i = 0; i < playersData.length; i++) {
@@ -129,7 +131,7 @@ io.on("connection", (socket) => {
         placedMeeples: [],
         isOnTouchScreen: data.isOnTouchScreen,
         isPlaying: true,
-        isTurn: noPlayers
+        isTurn: false
       });
     } else {
       mapPlayer(team, (player) => ({
