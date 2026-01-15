@@ -150,6 +150,7 @@ io.on("connection", (socket) => {
       undrawnTiles: currUndrawnTiles
     });
     io.emit("turns-order-changed", turnOrder);
+    io.emit("game-started", gameStarted);
   });
 
   type UserZoomedData = UserActionData<{
