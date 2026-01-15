@@ -10,6 +10,7 @@ export type Meeple = {
 };
 
 export type PlayerData = {
+  color: TeamColor;
   score: number;
   origin: Coords;
   zoom: number;
@@ -26,7 +27,7 @@ export type PlayerData = {
 
 export type TeamColor = "blue" | "red" | "yellow" | "green" | "purple";
 
-export type PlayersData = Record<TeamColor, PlayerData>;
+export type PlayersData = PlayerData[];
 
 export type UserActionData<T> = {
   team: TeamColor;

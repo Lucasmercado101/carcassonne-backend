@@ -2,7 +2,12 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import path from "path";
-import type { PlayersData, UserActionData } from "./types";
+import type {
+  PlayerData,
+  PlayersData,
+  TeamColor,
+  UserActionData
+} from "./types";
 
 const app = express();
 const server = createServer(app);
@@ -58,85 +63,19 @@ function genMeeples() {
   return meeples;
 }
 
-const playersData: PlayersData = {
-  blue: {
-    score: 0,
-    origin: {
-      x: 0,
-      y: 0
-    },
-    zoom: 1,
-    deviceDimensions: { width: 0, height: 0 },
-    availableMeeples: genMeeples(),
-    placedMeeples: [],
-    isOnTouchScreen: false,
-    isPlaying: false
-  },
-  red: {
-    score: 0,
-    origin: {
-      x: 0,
-      y: 0
-    },
-    zoom: 1,
-    deviceDimensions: {
-      width: 0,
-      height: 0
-    },
-    availableMeeples: genMeeples(),
-    placedMeeples: [],
-    isOnTouchScreen: false,
-    isPlaying: false
-  },
-  yellow: {
-    score: 0,
-    origin: {
-      x: 0,
-      y: 0
-    },
-    zoom: 1,
-    deviceDimensions: {
-      width: 0,
-      height: 0
-    },
-    availableMeeples: genMeeples(),
-    placedMeeples: [],
-    isOnTouchScreen: false,
-    isPlaying: false
-  },
-  green: {
-    score: 0,
-    origin: {
-      x: 0,
-      y: 0
-    },
-    zoom: 1,
-    deviceDimensions: {
-      width: 0,
-      height: 0
-    },
-    availableMeeples: genMeeples(),
-    placedMeeples: [],
-    isOnTouchScreen: false,
-    isPlaying: false
-  },
-  purple: {
-    score: 0,
-    origin: {
-      x: 0,
-      y: 0
-    },
-    zoom: 1,
-    deviceDimensions: {
-      width: 0,
-      height: 0
-    },
-    availableMeeples: genMeeples(),
-    placedMeeples: [],
-    isOnTouchScreen: false,
-    isPlaying: false
-  }
-};
+const playersData: PlayersData = [];
+
+function mapPlayer(
+  color: TeamColor,
+  mapFn: (player: PlayerData) => PlayerData
+) {
+  return playersData.map((player) => {
+    if (player.color === color) {
+      return mapFn(player);
+    }
+    return player;
+  });
+}
 
 type DrawnTile = {
   imageId: number;
@@ -164,42 +103,10 @@ io.on("connection", (socket) => {
   });
   console.log(`user ${socket.id} connected`);
 
-  // setInterval(() => {
-  //   // console.log("sending -> mocking lots of players changes");
-  //   const cursorMovedMockData = {
-  //     x: Math.random() * 1000,
-  //     y: Math.random() * 1000
-  //   };
-  //   // console.log("Mock data", cursorMovedMockData);
-  //   socket.broadcast.emit("cursor-moved", {
-  //     team: "blue",
-  //     data: cursorMovedMockData
-  //   });
-
-  //   const userPannedMockData = {
-  //     x: Math.random() * 100,
-  //     y: Math.random() * 100
-  //   };
-  //   socket.broadcast.emit("user-panned", {
-  //     team: "blue",
-  //     data: userPannedMockData
-  //   });
-
-  //   const userZoomedMockData = {
-  //     zoom: Math.random() * 1 + 0.5,
-  //     x: userPannedMockData.x,
-  //     y: userPannedMockData.y
-  //   };
-  //   socket.broadcast.emit("user-zoomed", {
-  //     team: "blue",
-  //     data: userZoomedMockData
-  //   });
-  // }, 2000);
-
   socket.on("user-panned", (data: UserActionData<{ x: number; y: number }>) => {
     const { x, y } = data.data;
     console.log(`user ${data.team} panned to (${x}, ${y})`);
-    playersData[data.team].origin = { x, y };
+    mapPlayer(data.team, (player) => ({ ...player, origin: { x, y } }));
     const resp: UserActionData<{ x: number; y: number }> = {
       team: data.team,
       data: { x, y }
@@ -216,13 +123,16 @@ io.on("connection", (socket) => {
     isOnTouchScreen: boolean;
   }>;
 
-  socket.on("team-selected", (msg: UserTeamSelectedData) => {
-    console.log("user team selected", msg);
-    playersData[msg.team].deviceDimensions = msg.data;
-    playersData[msg.team].zoom = msg.data.zoom;
-    playersData[msg.team].origin = { x: msg.data.x, y: msg.data.y };
-    playersData[msg.team].isOnTouchScreen = msg.data.isOnTouchScreen;
-    playersData[msg.team].isPlaying = true;
+  socket.on("team-selected", ({ team, data }: UserTeamSelectedData) => {
+    console.log("user team selected", data);
+    mapPlayer(team, (player) => ({
+      ...player,
+      deviceDimensions: data,
+      zoom: data.zoom,
+      origin: { x: data.x, y: data.y },
+      isOnTouchScreen: data.isOnTouchScreen,
+      isPlaying: true
+    }));
     io.emit("playersData", playersData);
     io.emit(TILES_DATA, {
       drawnTiles,
@@ -236,10 +146,13 @@ io.on("connection", (socket) => {
     y: number;
   }>;
 
-  socket.on("user-zoomed", (msg: UserZoomedData) => {
-    console.log("user zoomed", msg);
-    playersData[msg.team].zoom = msg.data.zoom;
-    playersData[msg.team].origin = { x: msg.data.x, y: msg.data.y };
+  socket.on("user-zoomed", ({ team, data }: UserZoomedData) => {
+    console.log("user zoomed", data);
+    mapPlayer(team, (player) => ({
+      ...player,
+      zoom: data.zoom,
+      origin: { x: data.x, y: data.y }
+    }));
 
     type UserZoomedResponse = UserActionData<{
       zoom: number;
@@ -248,11 +161,11 @@ io.on("connection", (socket) => {
     }>;
 
     const resp: UserZoomedResponse = {
-      team: msg.team,
+      team: team,
       data: {
-        zoom: msg.data.zoom,
-        x: msg.data.x,
-        y: msg.data.y
+        zoom: data.zoom,
+        x: data.x,
+        y: data.y
       }
     };
 
@@ -264,17 +177,20 @@ io.on("connection", (socket) => {
     height: number;
   }>;
 
-  socket.on("resized-window", (msg: ResizedWindowData) => {
-    console.log("user resized window", msg);
-    playersData[msg.team].deviceDimensions = msg.data;
+  socket.on("resized-window", ({ team, data }: ResizedWindowData) => {
+    console.log("user resized window", data);
+    mapPlayer(team, (player) => ({ ...player, deviceDimensions: data }));
+
     type ResizedWindowResponse = UserActionData<{
       width: number;
       height: number;
     }>;
+
     const response: ResizedWindowResponse = {
-      team: msg.team,
-      data: msg.data
+      team: team,
+      data: data
     };
+
     socket.broadcast.emit("resized-window", response);
   });
 
@@ -284,17 +200,19 @@ io.on("connection", (socket) => {
     y: number;
   }>;
 
-  socket.on("meeple-placed", (msg: UserPlacedMeepleData) => {
-    console.log("user meeple placed", msg);
-    playersData[msg.team].placedMeeples.push({
-      id: msg.data.id,
-      x: msg.data.x,
-      y: msg.data.y
-    });
-    playersData[msg.team].availableMeeples = playersData[
-      msg.team
-    ].availableMeeples.filter((meeple) => meeple.id !== msg.data.id);
-    socket.broadcast.emit("meeple-placed", msg);
+  socket.on("meeple-placed", ({ team, data }: UserPlacedMeepleData) => {
+    console.log("user meeple placed", data);
+    mapPlayer(team, (player) => ({
+      ...player,
+      placedMeeples: [
+        ...player.placedMeeples,
+        { id: data.id, x: data.x, y: data.y }
+      ],
+      availableMeeples: player.availableMeeples.filter(
+        (meeple) => meeple.id !== data.id
+      )
+    }));
+    socket.broadcast.emit("meeple-placed", { team, data });
   });
 
   type OnMeepleMovedData = UserActionData<{
@@ -303,17 +221,18 @@ io.on("connection", (socket) => {
     y: number;
   }>;
 
-  socket.on("meeple-moved", (msg: OnMeepleMovedData) => {
-    console.log("meeple moved", msg);
-    playersData[msg.team].placedMeeples = playersData[
-      msg.team
-    ].placedMeeples.map((meeple) => {
-      if (meeple.id === msg.data.id) {
-        return { ...meeple, x: msg.data.x, y: msg.data.y };
-      }
-      return meeple;
-    });
-    socket.broadcast.emit("meeple-moved", msg);
+  socket.on("meeple-moved", ({ team, data }: OnMeepleMovedData) => {
+    console.log("meeple moved", data);
+    mapPlayer(team, (player) => ({
+      ...player,
+      placedMeeples: player.placedMeeples.map((meeple) => {
+        if (meeple.id === data.id) {
+          return { ...meeple, x: data.x, y: data.y };
+        }
+        return meeple;
+      })
+    }));
+    socket.broadcast.emit("meeple-moved", { team, data });
   });
 
   type OnDrawTileAction = UserActionData<{
@@ -323,10 +242,10 @@ io.on("connection", (socket) => {
     y: number;
   }>;
 
-  socket.on("tile-drawn", (msg: OnDrawTileAction) => {
-    console.log("tile drawn", msg);
+  socket.on("tile-drawn", ({ team, data }: OnDrawTileAction) => {
+    console.log("tile drawn", data);
     const drawnTile = currUndrawnTiles.find(
-      (tile) => tile.imageId === msg.data.imageId
+      (tile) => tile.imageId === data.imageId
     );
 
     currUndrawnTiles = currUndrawnTiles
@@ -340,10 +259,10 @@ io.on("connection", (socket) => {
 
     drawnTiles = drawnTiles.map((tile) => ({ ...tile, isHighlighted: false }));
     drawnTiles.push({
-      imageId: msg.data.imageId,
-      uid: msg.data.uid,
-      x: msg.data.x,
-      y: msg.data.y,
+      imageId: data.imageId,
+      uid: data.uid,
+      x: data.x,
+      y: data.y,
       rotationDegree: 0,
       isHighlighted: true
     });
@@ -419,10 +338,10 @@ io.on("connection", (socket) => {
 
   socket.on("cursor-moved", ({ team, data }: UserCursorMovedData) => {
     console.log("cursor moved", data);
-    playersData[team].cursorPosition = {
-      x: data.worldX,
-      y: data.worldY
-    };
+    mapPlayer(team, (player) => ({
+      ...player,
+      cursorPosition: { x: data.worldX, y: data.worldY }
+    }));
 
     const response: UserActionData<{
       x: number;
@@ -439,10 +358,10 @@ io.on("connection", (socket) => {
 
   type UserScoreChangedData = UserActionData<number>;
 
-  socket.on("score-changed", (msg: UserScoreChangedData) => {
-    console.log("score changed", msg);
-    playersData[msg.team].score = msg.data;
-    socket.broadcast.emit("score-changed", msg);
+  socket.on("score-changed", ({ team, data }: UserScoreChangedData) => {
+    console.log("score changed", data);
+    mapPlayer(team, (player) => ({ ...player, score: data }));
+    socket.broadcast.emit("score-changed", data);
   });
 });
 
@@ -466,3 +385,35 @@ const PORT = process.env.PORT || 4123;
 server.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
 });
+
+// setInterval(() => {
+//   // console.log("sending -> mocking lots of players changes");
+//   const cursorMovedMockData = {
+//     x: Math.random() * 1000,
+//     y: Math.random() * 1000
+//   };
+//   // console.log("Mock data", cursorMovedMockData);
+//   socket.broadcast.emit("cursor-moved", {
+//     team: "blue",
+//     data: cursorMovedMockData
+//   });
+
+//   const userPannedMockData = {
+//     x: Math.random() * 100,
+//     y: Math.random() * 100
+//   };
+//   socket.broadcast.emit("user-panned", {
+//     team: "blue",
+//     data: userPannedMockData
+//   });
+
+//   const userZoomedMockData = {
+//     zoom: Math.random() * 1 + 0.5,
+//     x: userPannedMockData.x,
+//     y: userPannedMockData.y
+//   };
+//   socket.broadcast.emit("user-zoomed", {
+//     team: "blue",
+//     data: userZoomedMockData
+//   });
+// }, 2000);
