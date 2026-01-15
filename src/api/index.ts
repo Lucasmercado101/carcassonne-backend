@@ -62,6 +62,10 @@ const playersData: PlayerData[] = [];
 let turnOrder: TeamColor[] = [];
 let gameStarted = false;
 
+function shuffleTurnOrder() {
+  turnOrder = turnOrder.sort(() => Math.random() - 0.5);
+}
+
 function mapPlayer(team: TeamColor, mapFn: (player: PlayerData) => PlayerData) {
   for (let i = 0; i < playersData.length; i++) {
     const player = playersData[i];
@@ -156,7 +160,9 @@ io.on("connection", (socket) => {
   socket.on("start-game", () => {
     console.log("game started!");
     gameStarted = true;
+    shuffleTurnOrder();
     socket.broadcast.emit("game-started", gameStarted);
+    io.emit("turns-order-changed", turnOrder);
   });
 
   type UserZoomedData = UserActionData<{
