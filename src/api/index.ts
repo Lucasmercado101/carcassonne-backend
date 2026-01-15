@@ -118,7 +118,6 @@ io.on("connection", (socket) => {
 
   socket.on("team-selected", ({ team, data }: UserTeamSelectedData) => {
     console.log("user team selected", data);
-    const noPlayers = playersData.length === 0;
 
     if (!playersData.find((player) => player.team === team)) {
       playersData.push({
