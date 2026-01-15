@@ -66,12 +66,12 @@ function genMeeples() {
 const playersData: PlayersData = [];
 
 function mapPlayer(team: TeamColor, mapFn: (player: PlayerData) => PlayerData) {
-  return playersData.map((player) => {
-    if (player.team === team) {
-      return mapFn(player);
+  for (let i = 0; i < playersData.length; i++) {
+    const player = playersData[i];
+    if (player && player.team === team) {
+      playersData[i] = mapFn(player);
     }
-    return player;
-  });
+  }
 }
 
 type DrawnTile = {
