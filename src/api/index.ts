@@ -132,6 +132,7 @@ io.on("connection", (socket) => {
         isPlaying: true,
         isTurn: false
       });
+      turnOrder.push(team);
     } else {
       mapPlayer(team, (player) => ({
         ...player,
@@ -148,6 +149,7 @@ io.on("connection", (socket) => {
       drawnTiles,
       undrawnTiles: currUndrawnTiles
     });
+    io.emit("turns-order-changed", turnOrder);
   });
 
   type UserZoomedData = UserActionData<{
