@@ -23,6 +23,7 @@ export type PlayerData = {
   cursorPosition?: Coords;
   isOnTouchScreen: boolean;
   isPlaying: boolean;
+  isTurn: boolean;
 };
 
 export type TeamColor = "blue" | "red" | "yellow" | "green" | "purple";
