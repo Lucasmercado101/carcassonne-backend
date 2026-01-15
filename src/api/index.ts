@@ -175,12 +175,15 @@ io.on("connection", (socket) => {
     const isUsersTurn = playersData.find(
       (player) => player.team === team
     )?.isTurn;
-    // if (!isUsersTurn) return;
-    // mapPlayer(team, (player) => ({ ...player, isTurn: false }));
-    // turnOrder = turnOrder.filter((turn) => turn !== team);
-    // turnOrder.push(team);
-    // io.emit("turns-order-changed", turnOrder);
-    // io.emit("current-turn-changed", turnOrder[0]!);
+    if (!isUsersTurn) return;
+    mapPlayer(team, (player) => ({ ...player, isTurn: false }));
+    let nextTurn = turnOrder[turnOrder.indexOf(team) + 1];
+    if (!nextTurn) {
+      nextTurn = turnOrder[0]!;
+    }
+    mapPlayer(nextTurn, (player) => ({ ...player, isTurn: true }));
+    io.emit("turns-order-changed", turnOrder);
+    io.emit("current-turn-changed", nextTurn);
   });
 
   type UserZoomedData = UserActionData<{
