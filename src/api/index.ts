@@ -153,6 +153,12 @@ io.on("connection", (socket) => {
     io.emit("game-started", gameStarted);
   });
 
+  socket.on("start-game", () => {
+    console.log("game started!");
+    gameStarted = true;
+    socket.broadcast.emit("game-started", gameStarted);
+  });
+
   type UserZoomedData = UserActionData<{
     zoom: number;
     x: number;
