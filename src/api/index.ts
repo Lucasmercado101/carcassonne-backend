@@ -96,11 +96,6 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  socket.emit("playersData", playersData);
-  socket.emit(TILES_DATA, {
-    drawnTiles,
-    undrawnTiles: currUndrawnTiles
-  });
   console.log(`user ${socket.id} connected`);
 
   socket.on("user-panned", (data: UserActionData<{ x: number; y: number }>) => {
@@ -125,14 +120,29 @@ io.on("connection", (socket) => {
 
   socket.on("team-selected", ({ team, data }: UserTeamSelectedData) => {
     console.log("user team selected", data);
-    mapPlayer(team, (player) => ({
-      ...player,
-      deviceDimensions: data,
-      zoom: data.zoom,
-      origin: { x: data.x, y: data.y },
-      isOnTouchScreen: data.isOnTouchScreen,
-      isPlaying: true
-    }));
+    if (!playersData.find((player) => player.color === team)) {
+      playersData.push({
+        color: team,
+        score: 0,
+        origin: { x: 0, y: 0 },
+        zoom: 1,
+        deviceDimensions: { width: 0, height: 0 },
+        availableMeeples: genMeeples(),
+        placedMeeples: [],
+        isOnTouchScreen: data.isOnTouchScreen,
+        isPlaying: true
+      });
+    } else {
+      mapPlayer(team, (player) => ({
+        ...player,
+        deviceDimensions: data,
+        zoom: data.zoom,
+        origin: { x: data.x, y: data.y },
+        isOnTouchScreen: data.isOnTouchScreen
+      }));
+    }
+    console.log("PLAYERS DATA", playersData);
+
     io.emit("playersData", playersData);
     io.emit(TILES_DATA, {
       drawnTiles,
