@@ -170,6 +170,19 @@ io.on("connection", (socket) => {
     io.emit("current-turn-changed", firstTurn);
   });
 
+  socket.on("end-turn", ({ team }: UserActionData<void>) => {
+    console.log("Ending turn for team", team);
+    const isUsersTurn = playersData.find(
+      (player) => player.team === team
+    )?.isTurn;
+    // if (!isUsersTurn) return;
+    // mapPlayer(team, (player) => ({ ...player, isTurn: false }));
+    // turnOrder = turnOrder.filter((turn) => turn !== team);
+    // turnOrder.push(team);
+    // io.emit("turns-order-changed", turnOrder);
+    // io.emit("current-turn-changed", turnOrder[0]!);
+  });
+
   type UserZoomedData = UserActionData<{
     zoom: number;
     x: number;
