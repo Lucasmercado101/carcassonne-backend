@@ -372,7 +372,15 @@ io.on("connection", (socket) => {
   socket.on("score-changed", ({ team, data }: UserScoreChangedData) => {
     console.log("score changed", data);
     mapPlayer(team, (player) => ({ ...player, score: data }));
-    socket.broadcast.emit("score-changed", data);
+
+    type UserScoreChangedResponse = UserActionData<number>;
+
+    const response: UserScoreChangedResponse = {
+      team: team,
+      data: data
+    };
+
+    socket.broadcast.emit("score-changed", response);
   });
 });
 
