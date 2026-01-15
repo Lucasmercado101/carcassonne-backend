@@ -27,8 +27,6 @@ export type PlayerData = {
 
 export type TeamColor = "blue" | "red" | "yellow" | "green" | "purple";
 
-export type PlayersData = PlayerData[];
-
 export type UserActionData<T> = {
   team: TeamColor;
   data: T;

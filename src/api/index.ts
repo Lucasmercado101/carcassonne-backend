@@ -2,12 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import path from "path";
-import type {
-  PlayerData,
-  PlayersData,
-  TeamColor,
-  UserActionData
-} from "./types";
+import type { PlayerData, TeamColor, UserActionData } from "./types";
 
 const app = express();
 const server = createServer(app);
@@ -63,7 +58,7 @@ function genMeeples() {
   return meeples;
 }
 
-const playersData: PlayersData = [];
+const playersData: PlayerData[] = [];
 
 function mapPlayer(team: TeamColor, mapFn: (player: PlayerData) => PlayerData) {
   for (let i = 0; i < playersData.length; i++) {
