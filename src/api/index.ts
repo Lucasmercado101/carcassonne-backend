@@ -437,6 +437,22 @@ app.get("/api/get-current-play-data", (req, res) => {
   });
 });
 
+type TileDeckTileAmountBody = {
+  imageId: number;
+  amount: number;
+};
+
+app.post("/api/tile-deck-tile-amount", (req, res) => {
+  const { imageId, amount } = req.body as TileDeckTileAmountBody;
+  currUndrawnTiles = currUndrawnTiles.map((tile) => {
+    if (tile.imageId === imageId) {
+      return { ...tile, amount };
+    }
+    return tile;
+  });
+  res.json({ success: true, currUndrawnTiles });
+});
+
 app.get("/api/playable-tiles", (req, res) => {
   res.json(currUndrawnTiles);
 });
