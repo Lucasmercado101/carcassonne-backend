@@ -23,19 +23,19 @@ const STARTING_MEEPLES = 7;
 export const DEFAULT_UNDRAWN_TILES = [
   { imageId: 1, amount: 2 },
   { imageId: 2, amount: 4 },
-  { imageId: 3, amount: 5 },
   { imageId: 4, amount: 1 },
+  { imageId: 6, amount: 4 },
+  { imageId: 3, amount: 5 },
+  { imageId: 7, amount: 2 },
   { imageId: 5, amount: 1 },
-  { imageId: 6, amount: 1 },
-  { imageId: 7, amount: 1 },
   { imageId: 8, amount: 3 },
   { imageId: 9, amount: 2 },
   { imageId: 10, amount: 3 },
   { imageId: 11, amount: 3 },
   { imageId: 12, amount: 3 },
-  { imageId: 13, amount: 2 },
-  { imageId: 14, amount: 3 },
   { imageId: 15, amount: 2 },
+  { imageId: 14, amount: 3 },
+  { imageId: 13, amount: 2 },
   { imageId: 16, amount: 3 },
   { imageId: 17, amount: 1 },
   { imageId: 18, amount: 3 },
@@ -43,8 +43,8 @@ export const DEFAULT_UNDRAWN_TILES = [
   { imageId: 20, amount: 1 },
   { imageId: 21, amount: 8 },
   { imageId: 22, amount: 9 },
-  { imageId: 23, amount: 4 },
-  { imageId: 24, amount: 1 }
+  { imageId: 24, amount: 4 },
+  { imageId: 23, amount: 1 }
 ];
 
 let currUndrawnTiles = [...DEFAULT_UNDRAWN_TILES];
