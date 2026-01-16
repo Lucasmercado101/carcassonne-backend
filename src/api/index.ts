@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import path from "path";
 import type { PlayerData, TeamColor, UserActionData } from "./types";
 import cors from "cors";
+import bodyParser from "body-parser";
 
 const app = express();
 app.use(
@@ -12,6 +13,7 @@ app.use(
     methods: ["GET", "POST"]
   })
 );
+app.use(bodyParser.json());
 
 const server = createServer(app);
 
@@ -443,6 +445,11 @@ type TileDeckTileAmountBody = {
 };
 
 app.post("/api/tile-deck-tile-amount", (req, res) => {
+  if (gameStarted) {
+    res.json({ success: false, error: "Game has already started" });
+    return;
+  }
+  console.log(req.body);
   const { imageId, amount } = req.body as TileDeckTileAmountBody;
   currUndrawnTiles = currUndrawnTiles.map((tile) => {
     if (tile.imageId === imageId) {
