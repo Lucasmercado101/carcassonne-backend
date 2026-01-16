@@ -3,8 +3,16 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import path from "path";
 import type { PlayerData, TeamColor, UserActionData } from "./types";
+import cors from "cors";
 
 const app = express();
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST"]
+  })
+);
+
 const server = createServer(app);
 
 const TILES_DATA = "tiles-data";
@@ -427,6 +435,10 @@ app.get("/api/get-current-play-data", (req, res) => {
     undrawnTiles: currUndrawnTiles,
     drawnTiles
   });
+});
+
+app.get("/api/playable-tiles", (req, res) => {
+  res.json(currUndrawnTiles);
 });
 
 // Serve index.html for all routes (SPA fallback)
