@@ -325,6 +325,23 @@ io.on("connection", (socket) => {
     io.emit(TILES_DATA, { drawnTiles, undrawnTiles: currUndrawnTiles });
   });
 
+  socket.on("tile-put-back-in-bag", ({ team, data }: OnDrawTileAction) => {
+    console.log("tile put back in bag", data);
+
+    const inUndrawn = currUndrawnTiles.find(
+      (tile) => tile.imageId === data.imageId
+    );
+
+    if (inUndrawn) {
+      inUndrawn.amount++;
+    } else {
+      currUndrawnTiles.push({ imageId: data.imageId, amount: 1 });
+    }
+    drawnTiles = drawnTiles.filter((tile) => tile.uid !== data.uid);
+    
+    io.emit(TILES_DATA, { drawnTiles, undrawnTiles: currUndrawnTiles });
+  })
+
   type TileMovedData = UserActionData<{
     uid: string;
     x: number;
