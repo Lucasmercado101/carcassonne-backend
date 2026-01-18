@@ -91,7 +91,7 @@ type DrawnTile = {
   x: number;
   y: number;
   rotationDegree: number;
-  isHighlighted: boolean;
+  isLatestDrawn: boolean;
 };
 
 let drawnTiles: DrawnTile[] = [];
@@ -313,14 +313,14 @@ io.on("connection", (socket) => {
       })
       .filter((tile) => tile.amount > 0);
 
-    drawnTiles = drawnTiles.map((tile) => ({ ...tile, isHighlighted: false }));
+    drawnTiles = drawnTiles.map((tile) => ({ ...tile, isLatestDrawn: false }));
     drawnTiles.push({
       imageId: data.imageId,
       uid: data.uid,
       x: data.x,
       y: data.y,
       rotationDegree: 0,
-      isHighlighted: true
+      isLatestDrawn: true
     });
     io.emit(TILES_DATA, { drawnTiles, undrawnTiles: currUndrawnTiles });
   });
@@ -461,6 +461,7 @@ app.post("/api/tile-deck-tile-amount", (req, res) => {
 });
 
 app.get("/api/playable-tiles", (req, res) => {
+  console.debug("Visited playable tiles")
   res.json(currUndrawnTiles);
 });
 
